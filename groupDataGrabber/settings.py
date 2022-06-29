@@ -8,5 +8,5 @@ load_dotenv(dotenv_path=env_path)
 
 APP_ID = os.getenv("APP_ID")
 APP_HASH = os.getenv("APP_HASH")
-BOT_TOKEN = os.getenv("APP_ID")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")

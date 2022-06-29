@@ -2,7 +2,11 @@ import json
 from pyrogram import Client
 import settings
 
-app = Client("my_account", settings.APP_ID, settings.APP_HASH)
+app = Client("my_bot", 
+        api_id = settings.APP_ID, 
+        api_hash = settings.APP_HASH, 
+        bot_token = settings.BOT_TOKEN
+    )
 
 def userEncoder(obj):
     return {
