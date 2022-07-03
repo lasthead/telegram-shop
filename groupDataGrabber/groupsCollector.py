@@ -46,3 +46,4 @@ for group in groupsCollection:
         session.add(groupEntity)
 
 session.commit()
+session.close()

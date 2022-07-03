@@ -11,17 +11,17 @@ Session = sessionmaker(bind=eng)
 session = Session()
 
 class Group(Base):
-    __tablename__ = 'bot_groups'
+    __tablename__ = 'users_groups'
     id = Column(BigInteger, primary_key=True, autoincrement=False)
     name = Column(String(80))
     is_active = Column(Boolean, default=False, nullable=False)
 
 
-class GroupUsers(Base):
-    __tablename__ = 'bot_group_users'
-    id = Column(Integer, primary_key=True, autoincrement=True)
+class User(Base):
+    __tablename__ = 'active_users'
+    id = Column(BigInteger, primary_key=True, autoincrement=False)
     group_id = Column(BigInteger, nullable=False)
-    first_name = Column(String(30))
+    username = Column(String(30))
     first_name = Column(String(30))
     last_name = Column(String(30))
     is_bot = Column(Boolean, default=False, nullable=False)
