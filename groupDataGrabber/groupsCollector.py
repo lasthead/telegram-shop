@@ -38,6 +38,7 @@ existGroupsList = list(session.query(Group))
 
 
 for group in groupsCollection:
+     # the group id must be negative 
     if (len([x.id for x in existGroupsList if x.id == -group.id]) < 1): 
         groupEntity = Group(
             id = -group.id,

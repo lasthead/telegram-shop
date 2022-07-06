@@ -1,5 +1,4 @@
 import json
-from tokenize import group
 from pyrogram import Client
 from sqlalchemy import engine_from_config, true
 import settings
@@ -32,6 +31,7 @@ async def main():
     session.commit()
     
     async with app:
+        # the group id must be negative 
         async for member in app.get_chat_members(-currentGroup.id):
             if member.user.username:
                 userEntity = User(
