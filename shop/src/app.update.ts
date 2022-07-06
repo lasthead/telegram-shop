@@ -1,5 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import {Logger} from '@nestjs/common';
 import {Action, InjectBot, Start, Update} from "nestjs-telegraf";
 import {Context, Telegraf} from "telegraf";
 import {actionButtons, searchButtons} from "./app.buttons";
@@ -9,8 +8,8 @@ import {I18nService} from "nestjs-i18n";
 export class AppUpdate {
   constructor(
     @InjectBot() private readonly bot: Telegraf<Context>,
-    private readonly appService: AppService,
     readonly i18n: I18nService) {}
+    private readonly logger = new Logger(AppUpdate.name);
 
   @Start()
   async startCommand(ctx: Context) {
@@ -37,7 +36,11 @@ export class AppUpdate {
   async getStartMenu(ctx) {
     const chat_id = ctx.update.callback_query.message.chat.id
     const message_id = ctx.update.callback_query.message.message_id
-    await ctx.editMessageText(this.i18n.t("dict.start_description"), actionButtons(this.i18n), [chat_id, message_id])
+    try {
+      await ctx.editMessageText(this.i18n.t("dict.start_description"), actionButtons(this.i18n), [chat_id, message_id])
+    } catch (e) {
+      this.logger.error("start-menu is already open")
+    }
   }
 
   async catalogMenu() {
