@@ -13,11 +13,13 @@ export class AppUpdate {
 
   @Start()
   async startCommand(ctx: Context) {
+    console.log("start", ctx)
     await ctx.reply(this.i18n.t('dict.start_description'), actionButtons(this.i18n))
   }
 
   @Action("catalog")
   async getCatalog(ctx) {
+    console.log("catalog", ctx.update.callback_query.from)
     return await this.getStartMenu(ctx)
   }
 
