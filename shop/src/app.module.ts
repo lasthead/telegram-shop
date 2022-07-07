@@ -8,17 +8,29 @@ import { AcceptLanguageResolver,
     I18nModule,
     QueryResolver, } from 'nestjs-i18n';
 import {ConfigModule} from "@nestjs/config";
+import {SequelizeModule} from "@nestjs/sequelize";
+import { UsersModule } from './users/users.module';
 
 const session = new LocalSession({ database: "session_db.json" })
 
 @Module({
   imports: [
       ConfigModule.forRoot({
-        envFilePath: "../.env"
+        envFilePath: `../.${process.env.NODE_ENV}.env`
       }),
       TelegrafModule.forRoot({
         middlewares: [ session.middleware() ],
         token: process.env.BOT_TOKEN
+      }),
+      SequelizeModule.forRoot({
+        dialect: 'mysql',
+        host: process.env.HOSTNAME,
+        port: Number(process.env.PORT),
+        username: process.env.USERNAME,
+        password: process.env.PASSWORD,
+        database: process.env.DATABASE,
+        models: [],
+        autoLoadModels: true,
       }),
       I18nModule.forRoot({
           fallbackLanguage: 'ru',
@@ -32,6 +44,7 @@ const session = new LocalSession({ database: "session_db.json" })
               AcceptLanguageResolver,
           ],
       }),
+      UsersModule,
   ],
   controllers: [],
   providers: [AppService, AppUpdate],
