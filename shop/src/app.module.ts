@@ -10,6 +10,14 @@ import { AcceptLanguageResolver,
 import {ConfigModule} from "@nestjs/config";
 import {SequelizeModule} from "@nestjs/sequelize";
 import { UsersModule } from './users/users.module';
+import { BrandsModule } from "./catalog/brands/brands.module";
+import {User} from "./users/users.model";
+import {UsersService} from "./users/users.service";
+import {Brand} from "./catalog/brands/brands.model";
+import {BrandsService} from "./catalog/brands/brands.service";
+import {AppButtons} from "./app.buttons";
+import {CollectionsService} from "./catalog/collections/collections.service";
+import {Collection} from "./catalog/collections/collections.model";
 
 const session = new LocalSession({ database: "session_db.json" })
 
@@ -29,12 +37,12 @@ const session = new LocalSession({ database: "session_db.json" })
         username: process.env.USERNAME,
         password: process.env.PASSWORD,
         database: process.env.DATABASE,
-        models: [],
+        models: [User, Brand, Collection],
         autoLoadModels: true,
       }),
+      SequelizeModule.forFeature([User, Brand, Collection]),
       I18nModule.forRoot({
           fallbackLanguage: 'ru',
-          formatter: (template: string) => template,
           loaderOptions: {
               path: path.join(__dirname, '/i18n/'),
               watch: true,
@@ -44,9 +52,8 @@ const session = new LocalSession({ database: "session_db.json" })
               AcceptLanguageResolver,
           ],
       }),
-      UsersModule,
   ],
   controllers: [],
-  providers: [AppService, AppUpdate],
+  providers: [AppService, AppUpdate, UsersService, BrandsService, CollectionsService, AppButtons],
 })
 export class AppModule {}

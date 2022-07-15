@@ -1,33 +1,61 @@
 import {Logger} from '@nestjs/common';
-import {Action, InjectBot, Start, Update} from "nestjs-telegraf";
+import {Action, InjectBot, On, Start, Update} from "nestjs-telegraf";
 import {Context, Telegraf} from "telegraf";
-import {actionButtons, searchButtons} from "./app.buttons";
+import {AppButtons} from "./app.buttons";
 import {I18nService} from "nestjs-i18n";
+import {UsersService} from "./users/users.service";
+import {BrandsService} from "./catalog/brands/brands.service";
+import {CollectionsService} from "./catalog/collections/collections.service";
 
 @Update ()
 export class AppUpdate {
   constructor(
     @InjectBot() private readonly bot: Telegraf<Context>,
-    readonly i18n: I18nService) {}
-    private readonly logger = new Logger(AppUpdate.name);
+    private readonly i18n: I18nService,
+    private readonly userService: UsersService,
+    private readonly brandService: BrandsService,
+    private readonly collectionService: CollectionsService,
+    private readonly appButtons: AppButtons,
+  ) {}
+
+  private readonly logger = new Logger(AppUpdate.name);
+
 
   @Start()
   async startCommand(ctx: Context) {
-    console.log("start", ctx)
-    await ctx.reply(this.i18n.t('dict.start_description'), actionButtons(this.i18n))
+    await ctx.reply(this.i18n.t('dict.start_description'), this.appButtons.actionButtons())
+  }
+
+  @Action("start")
+  async backToStart(ctx: Context) {
+    return await this.getStartMenu(ctx)
   }
 
   @Action("catalog")
   async getCatalog(ctx) {
-    console.log("catalog", ctx.update.callback_query.from)
-    return await this.getStartMenu(ctx)
+      const brands = await this.brandService.getAllBrands()
+      await this.replyData(
+        ctx,
+        this.i18n.t("dict.choose_brand"),
+        this.appButtons.buttonsList(brands, "start", "brand")
+      )
+  }
+
+  @Action(/^brand-(\d+)$/)
+  async getBrandCollections(ctx) {
+    const brand = await this.brandService.getBrandCollections(ctx.match[1])
+    await this.replyData(
+      ctx,
+      this.i18n.t("dict.brand_description", {args: { brand: brand.name }}),
+      this.appButtons.buttonsList(brand.collection, "catalog", ctx.match[1])
+    )
   }
 
   @Action("search")
   async getSearch(ctx) {
     const chat_id = ctx.update.callback_query.message.chat.id
     const message_id = ctx.update.callback_query.message.message_id
-    await ctx.editMessageText(this.i18n.t("dict.search_description"), searchButtons(this.i18n), [chat_id, message_id])
+    await ctx.editMessageText(this.i18n.t("dict.search_description"), this.appButtons.searchButtons(), [chat_id, message_id])
   }
 
   @Action("search-cancel")
@@ -36,16 +64,24 @@ export class AppUpdate {
   }
 
   async getStartMenu(ctx) {
+    return await this.replyData(ctx, this.i18n.t("dict.start_description"), this.appButtons.actionButtons())
+  }
+
+  async replyData(ctx, description?, content?) {
     const chat_id = ctx.update.callback_query.message.chat.id
     const message_id = ctx.update.callback_query.message.message_id
+    console.log(content.reply_markup.inline_keyboard)
     try {
-      await ctx.editMessageText(this.i18n.t("dict.start_description"), actionButtons(this.i18n), [chat_id, message_id])
-    } catch (e) {
-      this.logger.error("start-menu is already open")
+      await ctx.editMessageText(description, {
+          reply_markup: content.reply_markup,
+          chat_id,
+          message_id,
+          parse_mode: 'HTML'
+        })
+    }
+     catch (e) {
+      this.logger.error(e)
     }
   }
 
-  async catalogMenu() {
-
-  }
 }
