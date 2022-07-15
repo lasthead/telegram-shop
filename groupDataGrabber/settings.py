@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 
 load_dotenv()
-env_path = Path('.')/'.env'
+env_path = Path('../')/'.development.env'
 load_dotenv(dotenv_path=env_path)
 
 APP_ID = os.getenv("APP_ID")
