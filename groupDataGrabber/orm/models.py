@@ -1,7 +1,8 @@
-from sqlalchemy import BigInteger, create_engine, Column, Integer, String, Boolean
+from sqlalchemy import BigInteger, create_engine, Column, Integer, String, Boolean, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
- 
+from sqlalchemy.sql import func
+
 from orm.configs import DB_URI
  
 eng = create_engine (DB_URI)
@@ -15,6 +16,8 @@ class Group(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=False)
     name = Column(String(80))
     is_active = Column(Boolean, default=False, nullable=False)
+    createdAt = Column(DateTime(timezone=True), server_default=func.now())
+    updatedAt = Column(DateTime(timezone=True), onupdate=func.now())
 
 
 class User(Base):
@@ -24,6 +27,8 @@ class User(Base):
     username = Column(String(30))
     first_name = Column(String(30))
     last_name = Column(String(30))
+    createdAt = Column(DateTime(timezone=True), server_default=func.now())
+    updatedAt = Column(DateTime(timezone=True), onupdate=func.now())
     is_bot = Column(Boolean, default=False, nullable=False)
 
 
