@@ -9,28 +9,15 @@ export class BrandsService {
   constructor(@InjectModel(Brand) private brandRepository: Repository<Brand>) {}
 
   async getAllBrands() {
-    try {
-      return await this.brandRepository.findAll()
-    } catch (e) {
-      return e
-    }
+    return await this.brandRepository.findAll()
   }
   
   async getBrandCollections(id) {
-    // const brand = new Brand({ id: id })
-
-    try {
-      return await this.brandRepository.findOne({
-        where: { id },
-        include: {
-          model: Collection,
-        },
-        // mapToModel: true
-        // raw: true,
-        // nest: true,
-      })
-    } catch (e) {
-      console.warn(e)
-    }
+    return await this.brandRepository.findOne({
+      where: { id },
+      include: {
+        model: Collection,
+      },
+    })
   }
 }

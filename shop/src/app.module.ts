@@ -18,6 +18,15 @@ import {BrandsService} from "./catalog/brands/brands.service";
 import {AppButtons} from "./app.buttons";
 import {CollectionsService} from "./catalog/collections/collections.service";
 import {Collection} from "./catalog/collections/collections.model";
+import { ProductsModule } from './catalog/products/products.module';
+import { ProductsController } from './catalog/products/products.controller';
+import { ProductsService } from './catalog/products/products.service';
+import { SizesModule } from './catalog/sizes/sizes.module';
+import {Product} from "./catalog/products/products.model";
+import {Size} from "./catalog/sizes/sizes.model";
+import {ProductSizes} from "./catalog/products/product-sizes.model";
+import {SizesService} from "./catalog/sizes/sizes.service";
+import {CollectionsModule} from "./catalog/collections/collections.module";
 
 const session = new LocalSession({ database: "session_db.json" })
 
@@ -37,10 +46,10 @@ const session = new LocalSession({ database: "session_db.json" })
         username: process.env.USERNAME,
         password: process.env.PASSWORD,
         database: process.env.DATABASE,
-        models: [User, Brand, Collection],
+        models: [User, Brand, Collection, Product, Size, ProductSizes],
         autoLoadModels: true,
       }),
-      SequelizeModule.forFeature([User, Brand, Collection]),
+      SequelizeModule.forFeature([User, Brand, Collection, Product, Size, ProductSizes]),
       I18nModule.forRoot({
           fallbackLanguage: 'ru',
           loaderOptions: {
@@ -52,8 +61,22 @@ const session = new LocalSession({ database: "session_db.json" })
               AcceptLanguageResolver,
           ],
       }),
+      UsersModule,
+      BrandsModule,
+      CollectionsModule,
+      ProductsModule,
+      SizesModule,
   ],
-  controllers: [],
-  providers: [AppService, AppUpdate, UsersService, BrandsService, CollectionsService, AppButtons],
+  controllers: [ProductsController],
+  providers: [
+    AppService,
+    AppUpdate,
+    UsersService,
+    BrandsService,
+    CollectionsService,
+    AppButtons,
+    ProductsService,
+    SizesService,
+  ],
 })
 export class AppModule {}

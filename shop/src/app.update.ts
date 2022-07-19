@@ -1,21 +1,26 @@
 import {Logger} from '@nestjs/common';
-import {Action, InjectBot, On, Start, Update} from "nestjs-telegraf";
+import {Action, InjectBot, Start, Update} from "nestjs-telegraf";
 import {Context, Telegraf} from "telegraf";
 import {AppButtons} from "./app.buttons";
 import {I18nService} from "nestjs-i18n";
-import {UsersService} from "./users/users.service";
+// import {UsersService} from "./users/users.service";
 import {BrandsService} from "./catalog/brands/brands.service";
 import {CollectionsService} from "./catalog/collections/collections.service";
+// import {SizesService} from "./catalog/sizes/sizes.service";
+// import {CreateSizeDto} from "./catalog/sizes/dto/create-size.dto";
+// import {ProductsService} from "./catalog/products/products.service";
 
 @Update ()
 export class AppUpdate {
   constructor(
     @InjectBot() private readonly bot: Telegraf<Context>,
     private readonly i18n: I18nService,
-    private readonly userService: UsersService,
+    // private readonly userService: UsersService,
     private readonly brandService: BrandsService,
     private readonly collectionService: CollectionsService,
     private readonly appButtons: AppButtons,
+    // private sizeService: SizesService,
+    // private productService: ProductsService,
   ) {}
 
   private readonly logger = new Logger(AppUpdate.name);
@@ -70,7 +75,7 @@ export class AppUpdate {
   async replyData(ctx, description?, content?) {
     const chat_id = ctx.update.callback_query.message.chat.id
     const message_id = ctx.update.callback_query.message.message_id
-    console.log(content.reply_markup.inline_keyboard)
+
     try {
       await ctx.editMessageText(description, {
           reply_markup: content.reply_markup,

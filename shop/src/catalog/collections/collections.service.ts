@@ -10,21 +10,13 @@ export class CollectionsService {
   constructor(@InjectModel(Collection) private collectionRepository: Repository<Collection>) {}
 
   async getAllCollection() {
-    try {
-      return await this.collectionRepository.findAll({raw: true})
-    } catch (e) {
-      return e
-    }
+    return await this.collectionRepository.findAll({raw: true})
   }
 
   async getCollectionByBrand(brand_id) {
-    try {
-      return await this.collectionRepository.findAll({
-        where: { brand_id },
-        raw: true
-      })
-    } catch (e) {
-      return e
-    }
+    return await this.collectionRepository.findAll({
+      where: { brand_id },
+      raw: true
+    })
   }
 }
